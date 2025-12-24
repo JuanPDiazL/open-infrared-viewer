@@ -45,9 +45,10 @@ class Compositor():
 
         # Correction
         ffc_corrected_frame = ir_raw_frame - ffc_raw_frame + np.mean(ffc_raw_frame)
+        ffc_corrected_frame = ffc_corrected_frame.astype(np.float32)
 
         if self.calibrator.blind_pixel_mask is not None:
-            ffc_corrected_frame = cv2.inpaint(ffc_corrected_frame, self.calibrator.blind_pixel_mask.astype(np.uint8), 3, cv2.INPAINT_TELEA)
+            ffc_corrected_frame = cv2.inpaint(ffc_corrected_frame, self.calibrator.blind_pixel_mask, 3, cv2.INPAINT_TELEA)
 
         # Span Adjustment
         if self.settings.manual_span:

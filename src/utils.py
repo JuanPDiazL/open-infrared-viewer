@@ -71,9 +71,15 @@ class Signal(QObject):
         self.signal.disconnect(slot)
 
 def matlike_to_pixmap(frame: np.ndarray) -> QPixmap:
-        height, width, channels = frame.shape
+        if len(frame.shape) == 2:
+            height, width = frame.shape
+            channels = 1
+            pixel_format = QImage.Format.Format_Grayscale16
+        else:
+            height, width, channels = frame.shape
+            pixel_format = QImage.Format.Format_BGR888
         bytesPerLine = width * channels
-        image = QImage(frame.data, width, height, bytesPerLine, QImage.Format.Format_BGR888)
+        image = QImage(frame.data, width, height, bytesPerLine, pixel_format)
         pixmap = QPixmap.fromImage(image)
         return pixmap
 

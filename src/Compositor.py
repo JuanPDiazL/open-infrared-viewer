@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 
 from src.drivers.base import BaseDriver
+from src.Calibrator import Calibrator
 from src.utils import (
     GeneralSettings,
     FrameProperties,
@@ -14,6 +15,7 @@ class Compositor():
     def __init__(self):
         self.test = True
         self.current_device = None
+        self.calibrator: Calibrator = None
         self.last_frame = NULL_FRAME
         self.last_frame_properties = FrameProperties()
         self.settings = GeneralSettings()
@@ -43,6 +45,9 @@ class Compositor():
 
         # Correction
         ffc_corrected_frame = ir_raw_frame - ffc_raw_frame + np.mean(ffc_raw_frame)
+
+        if self.calibrator.blind_pixel_mask is not None:
+            ffc_corrected_frame = cv2.inpaint(ffc_corrected_frame, self.calibrator.blind_pixel_mask.astype(np.uint8), 3, cv2.INPAINT_TELEA)
 
         # Span Adjustment
         if self.settings.manual_span:

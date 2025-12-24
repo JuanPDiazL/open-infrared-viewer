@@ -15,21 +15,20 @@ from PyQt5.QtWidgets import (
     QGroupBox,
     QStatusBar,
 )
-from PyQt5.QtGui import (
-    QPixmap,
-    QImage,
-)
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import (
     Qt,
 )
 
+from src.blind_pixel_detection_window import BlindPixelDetectionWindow
 from src.Compositor import Compositor
 from src.Calibrator import Calibrator
 from src.drivers.MAG160Core import Mag160Core
 from src.utils import (
     GeneralSettings,
     COLORMAPS,
-    matlike_to_pixmap
+    SHUTTER_TRIGGERS,
+    matlike_to_pixmap,
 )
 
 FORM_CLASS, _ = loadUiType(os.path.join(
@@ -62,7 +61,6 @@ class MainWindow(QMainWindow, FORM_CLASS):
     flipComboBox: QComboBox
 
     blindPixelDetectionButton: QPushButton
-    blindPixelToleranceSlider: QSlider
 
     statusbar: QStatusBar
 
@@ -70,16 +68,22 @@ class MainWindow(QMainWindow, FORM_CLASS):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
+        self.blind_pixel_detection_window = BlindPixelDetectionWindow(self)
+
         self.settings = GeneralSettings()
 
         self.selected_camera = Mag160Core()
         self.selected_camera.connect()
 
         self.calibrator = Calibrator()
+        self.calibrator.settings = self.settings
+        self.calibrator.current_device = self.selected_camera
+        self.blind_pixel_detection_window.set_calibrator(self.calibrator)
 
         self.compositor = Compositor()
         self.compositor.settings = self.settings
         self.compositor.assign_device(self.selected_camera)
+        self.compositor.calibrator = self.calibrator
 
         blank_canvas = QPixmap(640, 480)
         blank_canvas.fill(Qt.black)
@@ -103,6 +107,9 @@ class MainWindow(QMainWindow, FORM_CLASS):
         self.recordButton.clicked.connect(self.record_button_event)
         self.triggerFfcButton.clicked.connect(lambda: self.selected_camera.set_ffc_frame(True))
         self.selected_camera.frame_ready.connect(self.update_frame)
+
+        self.blindPixelDetectionButton.clicked.connect(self.blind_pixel_detection_window.show)
+
         self.update_fields()
 
     def update_frame(self):

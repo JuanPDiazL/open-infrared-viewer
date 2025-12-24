@@ -96,16 +96,8 @@ class Compositor():
     def capture_frame(self):
         if self.current_device is None:
             return
-        if self.settings.post_capture_ffc:
-            self.current_device.ffc_frame_ready.connect(self.post_capture)
-            self.current_device.set_ffc_frame(True)
-            
         cv2.imwrite('frame.png', self.last_frame)
 
-    def post_capture(self):
-        print('ffc frame ready')
-        self.current_device.ffc_frame_ready.disconnect(self.post_capture)
-        
     def start_recording(self):
         if self.recording: return
         self.recording = True

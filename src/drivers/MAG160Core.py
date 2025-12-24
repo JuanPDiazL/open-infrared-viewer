@@ -15,7 +15,12 @@ from PyQt5.QtTest import QTest
 from src.drivers.base import BaseDriver
 from src.utils import (
     bytes_to_int,
-    get_endpoint
+    get_endpoint,
+    SHUTTER_TYPE_MONO_STABLE,
+    SHUTTER_TRIGGERS,
+    SHUTTER_TRIGGER_MANUAL,
+    SHUTTER_TRIGGER_TEMPERATURE,
+    SHUTTER_TRIGGER_TIME_INTERVAL,
 )
 
 COMMAND_CODES = {
@@ -61,6 +66,8 @@ class Mag160Core(BaseDriver):
     def __init__(self):
         super().__init__()
         self.driver_name = "MAG-160 Core"
+        self.shutter_type = SHUTTER_TYPE_MONO_STABLE
+        self.supported_shutter_triggers = [SHUTTER_TRIGGER_MANUAL, SHUTTER_TRIGGER_TEMPERATURE, SHUTTER_TRIGGER_TIME_INTERVAL]
 
     def connect(self):
         self.device = usb.core.find(idVendor=VID, idProduct=PID)

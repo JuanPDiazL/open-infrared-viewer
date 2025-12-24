@@ -41,7 +41,6 @@ class MainWindow(QMainWindow, FORM_CLASS):
     recordButton: QPushButton
 
     triggerFfcButton: QPushButton
-    postCaptureFfcCheckBox: QCheckBox
     freezeViewportCheckBox: QCheckBox
     ffcModeComboBox: QComboBox
 
@@ -90,7 +89,6 @@ class MainWindow(QMainWindow, FORM_CLASS):
         self.canvasLabel.setPixmap(blank_canvas)
 
         self.freezeViewportCheckBox.stateChanged.connect(self.set_settings_from_form)
-        self.postCaptureFfcCheckBox.stateChanged.connect(self.set_settings_from_form)
         self.manualSpanGroupBox.toggled.connect(self.set_settings_from_form)
         self.sliderRangeMinimumDoubleSpinBox.valueChanged.connect(self.span_range_event)
         self.sliderRangeMaximumDoubleSpinBox.valueChanged.connect(self.span_range_event)
@@ -146,7 +144,7 @@ class MainWindow(QMainWindow, FORM_CLASS):
 
     def set_settings_from_form(self):
         self.settings.freeze_on_ffc = self.freezeViewportCheckBox.isChecked()
-        self.settings.post_capture_ffc = self.postCaptureFfcCheckBox.isChecked()
+        self.settings.ffc_mode = self.ffcModeComboBox.currentText()
 
         self.settings.manual_span = self.manualSpanGroupBox.isChecked()
         self.settings.span_range[0] = self.spanStartDoubleSpinBox.value()
@@ -191,4 +189,5 @@ class MainWindow(QMainWindow, FORM_CLASS):
             self.transformGroupBox.setEnabled(False)
 
     def closeEvent(self, event):
-        self.selected_camera.close()
+        # self.selected_camera.close()
+        ...

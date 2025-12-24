@@ -14,15 +14,18 @@ from PyQt5.QtCore import (
     pyqtSignal,
 )
 
-NONE_SHUTTER_TYPE = "No Shutter"
-MONO_STABLE_SHUTTER_TYPE = "Mono Stable Shutter"
-BI_STABLE_SHUTTER_TYPE = "Bi Stable Shutter"
+SHUTTER_TYPE_NONE = 0 # "No Shutter"
+SHUTTER_TYPE_MONO_STABLE = 1 # "Mono Stable Shutter"
+SHUTTER_TYPE_BI_STABLE = 2 # "Bi Stable Shutter"
 
-NONE_SHUTTER_TRIGGER = "No Shutter Trigger"
-IN_DEVICE_SHUTTER_TRIGGER = "In Device Shutter Trigger"
-MANUAL_SHUTTER_TRIGGER = "Manual Shutter Trigger"
-TEMPERATURE_SHUTTER_TRIGGER = "Temperature Shutter Trigger"
-TIME_INTERVAL_SHUTTER_TRIGGER = "Time Interval Shutter Trigger"
+SHUTTER_TYPES = dict([(name, value) for name, value in locals().items() if name.startswith('SHUTTER_TYPE')])
+
+SHUTTER_TRIGGER_NONE = 0 # "No Shutter Trigger"
+SHUTTER_TRIGGER_MANUAL = 2 # "Manual Shutter Trigger"
+SHUTTER_TRIGGER_TEMPERATURE = 3 # "Temperature Shutter Trigger"
+SHUTTER_TRIGGER_TIME_INTERVAL = 4 # "Time Interval Shutter Trigger"
+
+SHUTTER_TRIGGERS = dict([(name, value) for name, value in locals().items() if name.startswith('SHUTTER_TRIGGER')])
 
 COLORMAPS = {"COLORMAP_GRAY": None}
 COLORMAPS = {**COLORMAPS, **dict([(name, getattr(cv2, name)) for name in dir(cv2) if name.startswith('COLORMAP')])}
@@ -38,8 +41,7 @@ def bytes_to_int(data):
 
 @dataclass
 class GeneralSettings:
-    ffc_mode = TEMPERATURE_SHUTTER_TRIGGER
-    post_capture_ffc = False
+    ffc_mode = SHUTTER_TRIGGER_TEMPERATURE
     freeze_on_ffc = False
     manual_span = False
     slider_range = [0, 2 * 2**15]
